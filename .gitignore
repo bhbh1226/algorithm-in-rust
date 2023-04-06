@@ -1,4 +1,5 @@
 /target
 /src
+.vscode
 Cargo.lock
 Cargo.toml
