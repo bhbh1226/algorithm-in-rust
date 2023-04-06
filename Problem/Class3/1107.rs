@@ -1,6 +1,6 @@
 use std::{io, collections::VecDeque};
 
-fn do_dfs(disable_list: &[bool; 10], first_diff: u32, n: u32) -> u32 {
+fn do_bfs(disable_list: &[bool; 10], first_diff: u32, n: u32) -> u32 {
     let max_channel = 500000;
     let mut min_value = max_channel;
     let mut queue = VecDeque::<(u32, u32)>::new();
@@ -41,7 +41,7 @@ fn do_dfs(disable_list: &[bool; 10], first_diff: u32, n: u32) -> u32 {
 fn get_answer(n: u32, disable_list: &[bool; 10]) -> u32 {
     let first_diff = n.abs_diff(100);
 
-    do_dfs(disable_list, first_diff, n)
+    do_bfs(disable_list, first_diff, n)
 }
 
 fn main() {

@@ -1,6 +1,6 @@
 use std::{io, collections::VecDeque};
 
-fn do_dfs(check_coord: &mut [[bool; 50]; 50], real_coord: &[[bool; 50]; 50], m: u32, n: u32, queue: &mut VecDeque<(i32, i32)>) {
+fn do_bfs(check_coord: &mut [[bool; 50]; 50], real_coord: &[[bool; 50]; 50], m: u32, n: u32, queue: &mut VecDeque<(i32, i32)>) {
     while queue.is_empty() != true {
         let (x, y) = queue.pop_front().expect("pop error");
 
@@ -40,7 +40,7 @@ fn get_answer(check_coord: &mut [[bool; 50]; 50], real_coord: &[[bool; 50]; 50],
                 queue.push_back((i, j - 1));
                 queue.push_back((i, j + 1));
                 
-                do_dfs(check_coord, real_coord, m, n, &mut queue)
+                do_bfs(check_coord, real_coord, m, n, &mut queue)
             }
         }
     }
