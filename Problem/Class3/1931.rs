@@ -11,16 +11,16 @@ impl GreedyMeeting {
         }
     }
 
-    pub fn pop_front(&mut self) -> Option<(u32, u32)> {
-        self.meeting_vec.pop()
-    }
-
     pub fn push_with_sort(&mut self, value: (u32, u32)) {
         let mut i:usize = 0;
-        let (_x, y) = value;
+        let (x, y) = value;
 
         while i < self.meeting_vec.len() {
-            if self.meeting_vec.get(i).unwrap().1 > y {
+            let &(tx, ty) = self.meeting_vec.get(i).expect("Failed to get value in vector");
+
+            if ty < y {
+                i += 1;
+            } else if ty == y && tx < x {
                 i += 1;
             } else {
                 break;
@@ -30,12 +30,20 @@ impl GreedyMeeting {
         self.meeting_vec.insert(i, value);
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.meeting_vec.is_empty()
-    }
+    pub fn get_result(&self) -> u32 {
+        let mut count = 0;
+        let mut end_time = std::u32::MIN;
 
-    pub fn exclude(&mut self, value: u32) {
-        self.meeting_vec.retain(|a| a.0 >= value);
+        for i in 0..self.meeting_vec.len() {
+            let &(x, y) = self.meeting_vec.get(i).unwrap();
+
+            if x >= end_time {
+                count += 1;
+                end_time = y;
+            }
+        }
+
+        count
     }
 }
 
@@ -66,14 +74,7 @@ fn main() {
     }
 
     // get result
-    let mut result = 0;
-
-    while meeting.is_empty() != true {
-        let (_x, y) = meeting.pop_front().expect("Failed to pop.");
-
-        meeting.exclude(y);
-        result += 1;
-    }
+    let result = meeting.get_result();
 
     println!("{result}");
 }
