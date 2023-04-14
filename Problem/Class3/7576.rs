@@ -1,9 +1,9 @@
-use std::{io, collections::VecDeque};
+use std::{io, collections::VecDeque, iter::repeat};
 
 struct TomatoBox {
     m: usize,
     n: usize,
-    arr: [[i32; 1000]; 1000],
+    arr: Vec<Vec<i32>>,
 }
 
 impl TomatoBox {
@@ -11,12 +11,12 @@ impl TomatoBox {
         TomatoBox { 
             m, 
             n, 
-            arr: [[-1; 1000]; 1000], 
+            arr: repeat(vec![]).take(n).collect(), 
         }
     }
 
-    pub fn set_pos(&mut self, x: usize, y:usize, value: i32) {
-        self.arr[x][y] = value;
+    pub fn push_at(&mut self, x: usize, value: i32) {
+        self.arr[x].push(value);
     }
 
     fn do_bfs(&mut self, queue: &mut VecDeque<(i32, usize, usize)>) -> i32 { // depth, x, y
@@ -32,7 +32,7 @@ impl TomatoBox {
             result = result.max(depth);
             self.arr[x][y] = 1;
 
-            if x - 1 > 0 {
+            if x > 0 {
                 if self.arr[x - 1][y] == 0 {
                     queue.push_back((depth + 1, x - 1, y));
                 }
@@ -40,7 +40,7 @@ impl TomatoBox {
                 if self.arr[x + 1][y] == 0 {
                     queue.push_back((depth + 1, x + 1, y));
                 }
-            } if y - 1 > 0 {
+            } if y > 0 {
                 if self.arr[x][y - 1] == 0 {
                     queue.push_back((depth + 1, x, y - 1));
                 }
@@ -55,26 +55,27 @@ impl TomatoBox {
     }
 
     pub fn get_answer(&mut self) -> i32 {
-        let mut result = 0;
+        let mut is_trigger_exists = true;
+        let mut result = -1; // is 1 exists로 바꾸기
         let mut queue = VecDeque::<(i32, usize, usize)>::new();
 
         for i in 0..self.n {
             for j in 0..self.m {
                 if self.arr[i][j] == 1 {
-                    result = -1;
+                    is_trigger_exists = false;
                 
                     queue.push_back((0, i, j));
                 }
             }
         }
 
-        if result == 0 {
-            let cost = self.do_bfs(&mut queue);
+        if is_trigger_exists == false {
+            result = self.do_bfs(&mut queue);
             
             for i in 0..self.n {
                 for j in 0..self.m {
                     if self.arr[i][j] == 0 {
-                        result = cost;
+                        result = -1;
                     }
                 }
             }
@@ -114,7 +115,7 @@ fn main() {
         for j in 0..m {
             let value = *nums.get(j).expect("This is not a valid number.");
         
-            tbox.set_pos(i, j, value);
+            tbox.push_at(i, value);
         }
     }
 
